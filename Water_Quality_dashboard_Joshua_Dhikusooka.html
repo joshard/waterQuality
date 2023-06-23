@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/d3-sankey@2.0.0/dist/d3-sankey.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/d3-scale-chromatic@2.0.0/dist/d3-scale-chromatic.js"></script>
+  
+  <style>
+    /* Style for charts */
+    .chart {
+      width: 300px;
+      height: 300px;
+      display: inline-block;
+      margin: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div><h5>Requires Internet to load scripts</h5></div>
+  <div><h2>Makerere University</h2></div>
+  <div><h2>Course: Data analytics and Visualization</h2></div>
+  <div><h3>Name: Dhikusooka Joshua</h3></div>
+  <div><h3>RegNo: 2022/HD05/22178U</h3></div>
+  <div><h3>StudentNo: 2200722178</h3></div>
+  <div>
+  <div id="pie-chart" class="chart"><h2>Bulagala, Kamuli</h2></div>
+  <div id="bar-chart" class="chart"><h2>Alkalinity in Jinja Villages</h2></div>
+  
+  <div id="histogram" class="chart"><h2>Bicarbonates Nakaseke</h2></div>
+  <div id="heatmap-chart" class="chart"><h2>pH Levels Bugiri </h2></div>
+  <div id="donut-chart" class="chart"><h2>Sulphates Luwero</h2></div>
+  <div id="circular-packing" class="chart"><h2>Water Color Bugiri</h2></div>
+  <div id="lollipop-chart" class="chart"><h2>Sodium Iganga</h2></div>
+  <div id="bubble-chart" class="chart"><h2>Sodium Mukono</h2></div>
+  </div>
+<!-- 
+  <div id="buttons">
+    <button onclick="updateData(data1)">Data 1</button>
+    <button onclick="updateData(data2)">Data 2</button>
+  </div>
+  <div id="lollipop2-chart" class="chart"></div> -->
+  
+  <script>
+    var dataPie = [
+      { label: "Solids", value: 386.4 },      
+      { label: "Alkalinity", value: 190 },
+      { label: "Hardness", value: 156 },
+      { label: "Bicarbonates", value: 231.8 },
+      { label: "Sodium", value: 54 },
+      { label: "Conductivity", value: 552 },
+      { label: "Calcium", value: 98 },
+      // Add more data...
+    ];
+    var dataBar = [
+            
+      { label: "Masese", value: 48 },
+      { label: "Mutai", value: 91 },     
+      { label: "Nalufenya", value: 46 },
+      { label: "Rubaga Hill", value: 175 },
+      { label: "Mpumudde", value: 320 },
+      { label: "Kagoma", value: 38 },
+      { label: "Mawuta", value: 350 },
+      { label: "Nsube", value: 230 },      
+      { label: "Bugembe", value: 43 },
+      // Add more data...
+    ];
+
+    var dataBubble = [
+            
+      { label: "Kauga", value: 2.89 },     
+      { label: "Wanton", value: 17.8 },
+      { label: "Kisilamu", value: 5.9 },
+      { label: "Nakisunga", value: 4.2 },
+      { label: "Katosi", value: 49.7 },
+      { label: "Bulonda", value: 7.99 },
+      { label: "Kiyoora", value: 5.05 },      
+      { label: "Bugembe", value: 2.75 },
+      // Add more data...
+    ];
+
+    var dataHistogram = [
+            
+      { label: "Bulyake", value: 95 },     
+      { label: "Namasujja", value: 58 },
+      { label: "Kaasangombe", value: 128 },
+      { label: "Nambega", value: 128 },
+      { label: "Nakaseke", value: 65 },
+      { label: "Lufula Zone", value: 237 },
+      { label: "Church Zone", value: 79 },      
+      { label: "BKasambya", value: 23},
+      // Add more data...
+    ];
+
+    var data = [
+            
+      { label: "Butakanila", value: 7 },     
+      { label: "Buyubu", value: 6.7 },
+      { label: "Kikabala", value: 6.2 },
+      { label: "Lubila", value: 5.8 },
+      { label: "Bukonde", value: 5.6 },
+      { label: "Nawambidi", value: 6.7 },
+      { label: "Ndifakulya", value: 4.6 },      
+      { label: "Kimombasa", value: 7.2},
+      // Add more data...
+    ];
+
+    var dataCircular = [
+            
+      { label: "Butakanila", value: 57 },     
+      { label: "Buyubu", value: 21 },
+      { label: "Kikabala", value: 36 },
+      { label: "Lubila", value: 29 },
+      { label: "Bukonde", value: 66 },
+      { label: "Nawambidi", value: 18 },
+      { label: "Ndifakulya", value: 4 },      
+      { label: "Kimombasa", value: 88},
+      // Add more data...
+    ];
+
+    var dataDonut = [
+            
+      { label: "Vuumba", value: 14 },     
+      { label: "Ndeeba", value: 20 },
+      { label: "Kajjawo", value: 24 },
+      { label: "Zirobwe", value: 43 },
+      { label: "Namakofu", value: 36 },
+      { label: "Namawojja", value: 39 },
+      { label: "Tawalulwa", value: 27 },      
+      { label: "Nampunge", value: 14},
+      // Add more data...
+    ];
+
+    var dataLollipop = [
+            
+      { label: "Igenge", value: 13 },     
+      { label: "CMS", value: 26 },
+      { label: "Kasokoso", value: 85 },
+      { label: "Igulusa", value: 13 },
+      { label: "Namungalwe", value: 11 },
+      { label: "Nambale", value: 24 },
+      { label: "Nabikoote", value: 13 },      
+      { label: "Busei", value: 27},
+      // Add more data...
+    ];
+
+    var data1 = [
+    { label: "pH", value: 6.4 },
+    { label: "Electrical Conductivity", value: 552 },
+    { label: "Turbidity", value: 2.1 },
+    // Add more data...
+  ];
+
+  var data2 = [
+    { label: "Total Dissolved Solids", value: 386.4 },
+    { label: "Total Alkalinity", value: 190 },
+    { label: "Bicarbonates", value: 231.8 },
+    // Add more data...
+  ];
+
+    // Pie Chart
+    var pieChart = d3.pie().value(d => d.value);
+    var pieData = pieChart(dataPie);
+
+    var pieColors = d3.scaleOrdinal(d3.schemeCategory10);
+    var pieArc = d3.arc().innerRadius(0).outerRadius(100);
+
+    var svgPie = d3.select("#pie-chart")
+      .append("svg")
+      .attr("width", 300)
+      .attr("height", 300);
+
+    svgPie.selectAll("path")
+      .data(pieData)
+      .enter()
+      .append("path")
+      .attr("d", pieArc)
+      .attr("fill", (d, i) => pieColors(i))
+      .attr("transform", "translate(150, 150)");
+
+    svgPie.selectAll("text")
+      .data(pieData)
+      .enter()
+      .append("text")
+      .attr("text-anchor", "start")
+      .attr("x", d => pieArc.centroid(d)[0] + 150)
+      .attr("y", d => pieArc.centroid(d)[1] + 150)
+      .text(d => d.data.label);
+
+    // Bar Chart
+    var barChartWidth = 300;
+    var barChartHeight = 300;
+
+    var xScale = d3.scaleBand()
+      .domain(dataBar.map(d => d.label))
+      .range([0, barChartWidth])
+      .padding(0.1);
+
+    var yScale = d3.scaleLinear()
+      .domain([0, d3.max(dataBar, d => d.value)])
+      .range([barChartHeight, 0]);
+
+    var svgBar = d3.select("#bar-chart")
+      .append("svg")
+      .attr("width", barChartWidth)
+      .attr("height", barChartHeight);
+
+    svgBar.selectAll("rect")
+      .data(dataBar)
+      .enter()
+      .append("rect")
+      .attr("x", d => xScale(d.label))
+      .attr("y", d => yScale(d.value))
+      .attr("width", xScale.bandwidth())
+      .attr("height", d => barChartHeight - yScale(d.value))
+      .attr("fill", "steelblue");
+
+    svgBar.selectAll("text")
+      .data(dataBar)
+      .enter()
+      .append("text")
+      .attr("text-anchor", "start")
+      .attr("x", d => xScale(d.label) + xScale.bandwidth() / 2)
+      .attr("y", d => yScale(d.value) - 5)
+      // .text(d => d.label)
+      .text(d =>d.label +-+ d.value);
+
+    // Bubble Chart
+    var bubbleChartWidth = 300;
+    var bubbleChartHeight = 300;
+
+    var bubbleScale = d3.scaleLinear()
+      .domain([0, d3.max(dataBubble, d => d.value)])
+      .range([2, 60]);
+
+    var xBubbleScale = d3.scaleLinear()
+      .domain([0, d3.max(dataBubble, d => d.value)])
+      .range([bubbleScale(d3.min(dataBubble, d => d.value)), bubbleChartWidth - bubbleScale(d3.max(dataBubble, d => d.value))]);
+
+    var yBubbleScale = d3.scaleLinear()
+      .domain([0, d3.max(dataBubble, d => d.value)])
+      .range([bubbleChartHeight - bubbleScale(d3.max(dataBubble, d => d.value)), bubbleScale(d3.min(dataBubble, d => d.value))]);
+
+    var svgBubble = d3.select("#bubble-chart")
+      .append("svg")
+      .attr("width", bubbleChartWidth)
+      .attr("height", bubbleChartHeight);
+
+    svgBubble.selectAll("circle")
+      .data(dataBubble)
+      .enter()
+      .append("circle")
+      .attr("cx", d => xBubbleScale(d.value))
+      .attr("cy", d => yBubbleScale(d.value))
+      .attr("r", d => bubbleScale(d.value))
+      .attr("fill", "steelblue");
+
+    svgBubble.selectAll("text")
+      .data(dataBubble)
+      .enter()
+      .append("text")
+      .attr("text-anchor", "start")
+      .attr("x", d => xBubbleScale(d.value))
+      .attr("y", d => yBubbleScale(d.value))
+      .attr("dy", ".5em")
+      .text(d => d.value);
+
+    
+    // Double Histogram
+    var histogramWidth = 300;
+    var histogramHeight = 300;
+
+    var xScale = d3.scaleLinear()
+      .domain([0, d3.max(dataHistogram, d => d.value)])
+      .range([0, histogramWidth]);
+
+    var yScale = d3.scaleBand()
+      .domain(dataHistogram.map(d => d.label))
+      .range([histogramHeight, 0])
+      .padding(0.1);
+
+    var svgHistogram = d3.select("#histogram")
+      .append("svg")
+      .attr("width", histogramWidth)
+      .attr("height", histogramHeight)
+      .append("g")
+      .attr("transform", "translate(0,0)");
+
+    svgHistogram.selectAll(".bar")
+      .data(dataHistogram)
+      .enter()
+      .append("rect")
+      .attr("class", "bar")
+      .attr("x", 0)
+      .attr("y", d => yScale(d.label))
+      .attr("width", d => xScale(d.value))
+      .attr("height", yScale.bandwidth())
+      .attr("fill", "steelblue");
+
+    svgHistogram.selectAll("text")
+      .data(dataHistogram)
+      .enter()
+      .append("text")
+      .attr("text-anchor", "middle")
+      .attr("x", d => xScale(d.value) - 5)
+      .attr("y", d => yScale(d.label) + yScale.bandwidth() / 2)
+      .attr("dy", "0.35em")
+      .text(d => d.label +-+ d.value);
+
+     // Lollipop Chart
+     var lollipopChartWidth = 300;
+     var lollipopChartHeight = 300;
+ 
+     var xScale = d3.scaleBand()
+       .domain(dataLollipop.map(d => d.label))
+       .range([0, lollipopChartWidth])
+       .padding(0.1);
+ 
+     var yScale = d3.scaleLinear()
+       .domain([0, d3.max(dataLollipop, d => d.value)])
+       .range([lollipopChartHeight, 0]);
+ 
+     var svgLollipop = d3.select("#lollipop-chart")
+       .append("svg")
+       .attr("width", lollipopChartWidth)
+       .attr("height", lollipopChartHeight);
+ 
+     svgLollipop.selectAll("line")
+       .data(dataLollipop)
+       .enter()
+       .append("line")
+       .attr("x1", d => xScale(d.label) + xScale.bandwidth() / 2)
+       .attr("y1", lollipopChartHeight)
+       .attr("x2", d => xScale(d.label) + xScale.bandwidth() / 2)
+       .attr("y2", d => yScale(d.value))
+       .attr("stroke", "steelblue");
+ 
+     svgLollipop.selectAll("circle")
+       .data(dataLollipop)
+       .enter()
+       .append("circle")
+       .attr("cx", d => xScale(d.label) + xScale.bandwidth() / 2)
+       .attr("cy", d => yScale(d.value))
+       .attr("r", 10)
+       .attr("fill", "steelblue");
+ 
+     svgLollipop.selectAll("text")
+       .data(dataLollipop)
+       .enter()
+       .append("text")
+       .attr("text-anchor", "start")
+       .attr("x", d => xScale(d.label) + xScale.bandwidth() / 5)
+       .attr("y", d => yScale(d.value) - 10)
+       .text(d => d.label +-+ d.value)
+      //  .enter()
+      //  .append("text")
+      //  .text(d => d.label +-+ d.value);
+ 
+     svgLollipop.selectAll(".tick")
+       .data(dataLollipop)
+       .enter()
+       .append("text")
+       .attr("text-anchor", "start")
+       .attr("x", d => xScale(d.label) + xScale.bandwidth() / 2)
+       .attr("y", lollipopChartHeight + 20)
+       .text(d => d.label)
+       .attr("transform", d => `rotate(45 ${xScale(d.label) + xScale.bandwidth() / 2},${lollipopChartHeight + 20})`);
+ 
+     var xAxis = d3.axisBottom(xScale).tickSizeOuter(0);
+     svgLollipop.append("g")
+       .attr("transform", `translate(0, ${lollipopChartHeight})`)
+       .call(xAxis);
+ 
+     var yAxis = d3.axisLeft(yScale).ticks(5);
+     svgLollipop.append("g")
+       .call(yAxis);
+
+    
+    // lollipop2 chart with buttons   
+
+       var currentData = data1; // Initial data
+
+       var lollipopChartWidth = 300;
+       var lollipopChartHeight = 300;
+   
+       var xScale = d3.scaleBand()
+         .domain(currentData.map(d => d.label))
+         .range([0, lollipopChartWidth])
+         .padding(0.1);
+   
+       var yScale = d3.scaleLinear()
+         .domain([0, d3.max(currentData, d => d.value)])
+         .range([lollipopChartHeight, 0]);
+   
+       var svgLollipop = d3.select("#lollipop2-chart")
+         .append("svg")
+         .attr("width", lollipopChartWidth)
+         .attr("height", lollipopChartHeight);
+   
+       svgLollipop.selectAll("line")
+         .data(currentData)
+         .enter()
+         .append("line")
+         .attr("x1", d => xScale(d.label) + xScale.bandwidth() / 2)
+         .attr("y1", lollipopChartHeight)
+         .attr("x2", d => xScale(d.label) + xScale.bandwidth() / 2)
+         .attr("y2", d => yScale(d.value))
+         .attr("stroke", "steelblue");
+   
+       svgLollipop.selectAll("circle")
+         .data(currentData)
+         .enter()
+         .append("circle")
+         .attr("cx", d => xScale(d.label) + xScale.bandwidth() / 2)
+         .attr("cy", d => yScale(d.value))
+         .attr("r", 4)
+         .attr("fill", "steelblue");
+   
+       svgLollipop.selectAll("text")
+         .data(currentData)
+         .enter()
+         .append("text")
+         .attr("text-anchor", "middle")
+         .attr("x", d => xScale(d.label) + xScale.bandwidth() / 2)
+         .attr("y", d => yScale(d.value) - 10)
+         .text(d => d.value);
+   
+       svgLollipop.selectAll(".tick")
+         .data(currentData)
+         .enter()
+         .append("text")
+         .attr("text-anchor", "start")
+         .attr("x", d => xScale(d.label) + xScale.bandwidth() / 2)
+         .attr("y", lollipopChartHeight + 20)
+         .text(d => d.label)
+         .attr("transform", d => `rotate(45 ${xScale(d.label) + xScale.bandwidth() / 2},${lollipopChartHeight + 20})`);
+   
+       var xAxis = d3.axisBottom(xScale).tickSizeOuter(0);
+       svgLollipop.append("g")
+         .attr("transform", `translate(0, ${lollipopChartHeight})`)
+         .call(xAxis);
+   
+       var yAxis = d3.axisLeft(yScale).ticks(5);
+       svgLollipop.append("g")
+         .call(yAxis);
+   
+       // Function to update the chart with new data
+       function updateData(newData) {
+         currentData = newData;
+   
+         xScale.domain(currentData.map(d => d.label));
+         yScale.domain([0, d3.max(currentData, d => d.value)]);
+   
+         svgLollipop.selectAll("line")
+           .data(currentData)
+           .transition()
+           .duration(500)
+           .attr("y2", d => yScale(d.value));
+   
+         svgLollipop.selectAll("circle")
+           .data(currentData)
+           .transition()
+           .duration(500)
+           .attr("cy", d => yScale(d.value));
+   
+         svgLollipop.selectAll("text")
+           .data(currentData)
+           .transition()
+           .duration(500)
+           .attr("y", d => yScale(d.value) - 10)
+           .text(d => d.value);
+   
+         svgLollipop.selectAll(".tick")
+           .data(currentData)
+           .transition()
+           .duration(500)
+           .attr("x", d => xScale(d.label) + xScale.bandwidth() / 2)
+           .attr("transform", d => `rotate(45 ${xScale(d.label) + xScale.bandwidth() / 2},${lollipopChartHeight + 20})`);
+       }
+
+       //circular plot
+
+       var chartRadius = 150;
+    var chartCenter = { x: chartRadius, y: chartRadius };
+
+    var svgCircularBar = d3.select("#circular-bar-plot")
+      .append("svg")
+      .attr("width", chartRadius * 2)
+      .attr("height", chartRadius * 2);
+
+    var arcGenerator = d3.arc()
+      .innerRadius(0)
+      .outerRadius(chartRadius);
+
+    var pieGenerator = d3.pie()
+      .value(d => d.value)
+      .sort(null);
+
+    var colorScale = d3.scaleOrdinal(d3.schemeCategory10);
+
+    var arcs = svgCircularBar.selectAll("path")
+      .data(pieGenerator(data))
+      .enter()
+      .append("path")
+      .attr("d", arcGenerator)
+      .attr("fill", (d, i) => colorScale(i));
+
+    var labels = svgCircularBar.selectAll("text")
+      .data(pieGenerator(data))
+      .enter()
+      .append("text")
+      .attr("transform", d => `translate(${arcGenerator.centroid(d)})`)
+      .attr("text-anchor", "middle")
+      .text(d => d.data.label);
+
+    var values = svgCircularBar.selectAll("value")
+      .data(pieGenerator(data))
+      .enter()
+      .append("text")
+      .attr("transform", d => `translate(${arcGenerator.centroid(d)})`)
+      .attr("text-anchor", "middle")
+      .attr("dy", "1.2em")
+      .text(d => d.data.value);
+
+    
+    // Scatter Plot
+    var scatterChartWidth = 300;
+    var scatterChartHeight = 300;
+
+    var xScatterScale = d3.scaleLinear()
+      .domain([d3.min(data, d => d.scatterX), d3.max(data, d => d.scatterX)])
+      .range([0, scatterChartWidth]);
+
+    var yScatterScale = d3.scaleLinear()
+      .domain([d3.min(data, d => d.scatterY), d3.max(data, d => d.scatterY)])
+      .range([scatterChartHeight, 0]);
+
+    var svgScatter = d3.select("#scatter-plot")
+      .append("svg")
+      .attr("width", scatterChartWidth)
+      .attr("height", scatterChartHeight);
+
+    svgScatter.selectAll("circle")
+      .data(data)
+      .enter()
+      .append("circle")
+      .attr("cx", d => xScatterScale(d.scatterX))
+      .attr("cy", d => yScatterScale(d.scatterY))
+      .attr("r", 5)
+      .attr("fill", "steelblue");
+
+    svgScatter.selectAll("text")
+      .data(data)
+      .enter()
+      .append("text")
+      .attr("text-anchor", "middle")
+      .attr("x", d => xScatterScale(d.scatterX))
+      .attr("y", d => yScatterScale(d.scatterY) - 10)
+      .text(d => d.label+'--'+d.value);
+    
+    
+
+    // Sort the data array based on values in descending order
+    data.sort((a, b) => b.value - a.value);
+
+    // Heatmap Chart
+    var heatmapChartWidth = 300;
+    var heatmapChartHeight = 300;
+
+    var colorScale = d3.scaleSequential(d3.interpolateYlOrRd)
+      .domain([0, data.length]);
+
+    var svgHeatmap = d3.select("#heatmap-chart")
+      .append("svg")
+      .attr("width", heatmapChartWidth)
+      .attr("height", heatmapChartHeight);
+
+    svgHeatmap.selectAll("rect")
+      .data(data)
+      .enter()
+      .append("rect")
+      .attr("x", 0)
+      .attr("y", (d, i) => i * (heatmapChartHeight / data.length))
+      .attr("width", heatmapChartWidth)
+      .attr("height", heatmapChartHeight / data.length)
+      .attr("fill", (d, i) => colorScale(i));
+
+    svgHeatmap.selectAll("text")
+      .data(data)
+      .enter()
+      .append("text")
+      .attr("x", heatmapChartWidth / 2)
+      .attr("y", (d, i) => (i * (heatmapChartHeight / data.length)) + (heatmapChartHeight / data.length) / 2)
+      .attr("dy", "0.35em")
+      .attr("text-anchor", "middle")
+      .text(d => d.value +'--'+ d.label);
+    
+    
+    // Donut Chart
+    var donutChartWidth = 300;
+    var donutChartHeight = 300;
+    var donutRadius = Math.min(donutChartWidth, donutChartHeight) / 2;
+
+    var svgDonut = d3.select("#donut-chart")
+      .append("svg")
+      .attr("width", donutChartWidth)
+      .attr("height", donutChartHeight)
+      .append("g")
+      .attr("transform", "translate(" + donutChartWidth / 2 + "," + donutChartHeight / 2 + ")");
+
+    var colorScale = d3.scaleOrdinal(d3.schemeCategory10);
+
+    var pie = d3.pie()
+      .value(d => d.value);
+
+    var arc = d3.arc()
+      .innerRadius(donutRadius * 0.6)
+      .outerRadius(donutRadius * 0.8);
+
+    var arcLabel = d3.arc()
+      .innerRadius(donutRadius * 0.9)
+      .outerRadius(donutRadius * 0.9);
+
+    var arcs = svgDonut.selectAll("arc")
+      .data(pie(dataDonut))
+      .enter()
+      .append("g")
+      .attr("class", "arc");
+
+    arcs.append("path")
+      .attr("d", arc)
+      .attr("fill", (d, i) => colorScale(i));
+
+    arcs.append("text")
+      .attr("transform", d => "translate(" + arcLabel.centroid(d) + ")")
+      .attr("text-anchor", "middle")
+      .text(d => d.data.label+'-'+d.data.value);
+    
+    // Circular Packing
+    var circularPackingWidth = 300;
+    var circularPackingHeight = 300;
+
+    var svgCircularPacking = d3.select("#circular-packing")
+      .append("svg")
+      .attr("width", circularPackingWidth)
+      .attr("height", circularPackingHeight);
+
+    var pack = d3.pack()
+      .size([circularPackingWidth, circularPackingHeight])
+      .padding(2);
+
+    var root = d3.hierarchy({ children: dataCircular })
+      .sum(d => d.value);
+
+    pack(root);
+
+    var node = svgCircularPacking.selectAll(".node")
+      .data(root.descendants())
+      .enter()
+      .append("g")
+      .attr("class", d => "node" + (d.children ? " node--internal" : " node--leaf"))
+      .attr("transform", d => `translate(${d.x},${d.y})`);
+
+    node.append("circle")
+      .attr("r", d => d.r)
+      .attr("fill", (d, i) => d3.schemeCategory10[i % 20]);
+
+    node.append("text")
+      .attr("dy", 2)
+      .attr("text-anchor", "middle")
+      .text(d => d.data.label+'-'+d.data.value);
+
+  </script>
+</body>
+</html>
